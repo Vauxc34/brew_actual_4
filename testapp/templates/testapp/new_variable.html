@@ -1,0 +1,14 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+
+<p>Add a new Variable:</p>
+
+<form action="{% url 'testapp:new_var' %}" method='post'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Add Variable</button>
+</form>
+<div>
+    <a href="{% url 'testapp:variables' %}">Cancel</a>
+</div>
+{% endblock content %}

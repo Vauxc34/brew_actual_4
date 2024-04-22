@@ -1,0 +1,31 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<head>
+    <meta charset="UTF-8">
+    <title>Edit variable</title>
+</head>
+<body>
+
+<form method="POST">
+  {% csrf_token %}
+          {% for field in form %}
+            {{ field.label }}
+            {{ field }}
+            {% if not field.errors %}
+                <p class="form-text-danger"></p>
+            {% else %}
+                {% for e in field.errors %}
+                    <p class="form-text-danger">{{e}}</p>
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+  <button type="submit">Edit</button>
+</form>
+
+<br>
+<div>
+    <a href="{% url 'testapp:variables' %}">Go back</a>
+</div>
+
+</body>
+{% endblock content %}

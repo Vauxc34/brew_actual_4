@@ -1,0 +1,21 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<table style="width: 100%">
+    <thead>
+        <tr>
+            <th>Date created</th>
+            <th>Var</th>
+            <th>Value</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for value in values%}
+            <tr>
+                <td>{{value.date_created}}</td>
+                <td>{{value.var.value_name}}</td>
+                <td>{{value.value}}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

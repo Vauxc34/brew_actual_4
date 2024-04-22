@@ -1,0 +1,31 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<a href="{% url 'testapp:new_var' %}">Add a new variable</a>
+<table style="width: 100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date created</th>
+            <th>User</th>
+            <th>Device</th>
+            <th>Date updated</th>
+            <th>Frequency</th>
+            <th>Enabled</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for variable in variables %}
+            <tr>
+                <td><a href="{% url 'testapp:edit_variable' pk=variable.id %}">{{variable.value_name }}</a></td>
+                <td>{{variable.date  }}</td>
+                <td>{{variable.user.email   }}</td>
+                <td>{{variable.device.device_name    }}</td>
+                <td>{{variable.date_updated     }}</td>
+                <td>{{variable.frequency      }}</td>
+                <td>{{variable.enabled       }}</td>
+                <td><a href="{% url 'testapp:del_var' pk=variable.id %}">Delete</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

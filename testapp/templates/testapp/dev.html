@@ -1,0 +1,14 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<p>Device: {{ device }}</p>
+<ul>
+    {% for var in variables %}
+    <li>
+        <p>{{ var.date|date:'M d, Y H:i' }}</p>
+        <p>{{ var.value_name|linebreaks }}</p>
+    </li>
+   {% empty %}
+    <li>There are no variables for this device yet.</li>
+    {% endfor %}
+</ul>
+{% endblock content %}

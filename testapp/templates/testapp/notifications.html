@@ -1,0 +1,16 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<p>Notifications</p>
+<ul>
+   {% for notification in notifications %}
+   <li>
+   <a>{{ notification.name }}</a>
+   <a >Delete</a>
+   </li>
+   {% empty %}
+   <li>No topics have been added yet.</li>
+   {% endfor %}
+</ul>
+<a href="{% url 'testapp:new_dev' %}">Add a new device</a>
+
+{% endblock content %}

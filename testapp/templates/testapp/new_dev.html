@@ -1,0 +1,11 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+
+<p>Add a new Device:</p>
+
+<form action="{% url 'testapp:new_dev' %}" method='post'>
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button name="submit">Add device</button>
+</form>
+{% endblock content %}
