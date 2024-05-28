@@ -2,6 +2,8 @@
 from django.urls import path
 from . import views
 
+#MyFileViewSet, MyDataViewSet, UsersViewSet
+
 app_name = 'testapp'
 urlpatterns = [
     path('', views.index, name="index"),
@@ -21,5 +23,6 @@ urlpatterns = [
     # Page for deleting a variable
     path("variables/<int:pk>/delete", views.DelVariableView.as_view(), name="del_var"),
 
-    path("devices/modbus/add", views.ModbusDeviceCreateView.as_view(), name="new_modbus_device")
+    path("devices/modbus/add", views.ModbusDeviceCreateView.as_view(), name="new_modbus_device"),
+    
 ]

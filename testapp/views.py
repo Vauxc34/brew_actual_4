@@ -25,12 +25,23 @@ from rest_framework.generics import get_object_or_404
 
 def index(request):
     """The home page for Learning Log."""
-    return render(request, 'testapp/index.html')
+
+    files = MyFile.objects.all().order_by('id')
+    file_serializer = MyFileSerializer(files, many=True)
+
+    datas = User.objects.all().order_by('id')
+    data_serializer = UserSerializer(datas, many=True)
+
+    data_dev = ModbusDevice.objects.all()
+    data_serializer_dev = ModbusDeviceSerializer(data_dev, many=True)
+
+    context = {"files": file_serializer.data, 'users': data_serializer.data, 'devices': data_serializer_dev.data}
+    return render(request, 'testapp/index.html', context)
 
 def devices(request):
     """Show all devices """
     devices = Device.objects.order_by('date')
-    context = {'devices': devices}
+    context = {'devices': devices }
     return render(request, 'testapp/devices.html', context)
 
 def device(request, dev_id):
@@ -38,7 +49,13 @@ def device(request, dev_id):
     device = Device.objects.get(id = dev_id)
     variables = device.var_set.order_by('user')
     context = {'device': device, 'variables': variables}
+
+
+
     return render(request, 'testapp/dev.html', context)
+
+#def files(request)
+  #  return render()
 
 class ValueListView(ListView):
     template_name = "testapp/values.html"

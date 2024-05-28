@@ -2,4 +2,57 @@
 {% block content %}
 <p>Configurator</p>
 <p> Configurator helps you keep track of your variables for a device that you created</p>
+
+<h2>Files</h2>
+
+   <ul>
+      {% for file in files %}
+      <li>
+          <a>{{ file.file }}</a>   
+      </li>
+      {% empty %}
+      <li>No file's available.</li>
+      {% endfor %}
+  </ul>
+
+</ul>
+
+
+<h2>Users</h2>
+
+   <ul>
+      {% for user in users %}
+      <li>
+          <a>Email address: {{ user.email }}</a> <br> 
+          <a>Name: {{ user.first_name }}</a>  <br> 
+          <a>Password: {{ user.password }}</a>  
+      </li>
+      {% empty %}
+      <li>No user's available.</li>
+      {% endfor %}
+  </ul>
+
+</ul>
+
+<h2>Data devices</h2>
+
+   <ul>
+      {% for device in devices %}
+      <li>
+          <a>Email address: {{ device.name }}</a> <br> 
+          <a>Name: {{ device.ip }}</a>  <br> 
+          <a>Registration first: {{ device.reg_first }}</a>  <br> 
+          <a>Registration ammount: {{ device.reg_amount }}</a>  <br> 
+          <a>Date updated: {{ device.date_updated }}</a>  <br> 
+          <a>Frequency: {{ device.frequency }}</a>  <br> 
+          <a>Enabled: {{ device.enabled }}</a>  <br> 
+          <a>Number of users: {{ device.enabled }}</a>  
+      </li>
+      {% empty %}
+      <li>No device's available.</li>
+      {% endfor %}
+  </ul>
+
+</ul>
+
 {% endblock content %}
