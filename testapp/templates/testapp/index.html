@@ -3,6 +3,31 @@
 <p>Configurator</p>
 <p> Configurator helps you keep track of your variables for a device that you created</p>
 
+
+<!-- Display the plot -->
+{% if graph %}
+    <img src="data:image/png;base64,{{ graph }}" alt="Plot">
+{% endif %}
+
+
+ <!-- File upload form -->
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ upload_form.as_p }}
+    <button type="submit">Upload</button>
+</form>
+
+{% if error %}
+    <p style="color: red;">{{ error }}</p>
+{% endif %}
+
+{% if row_limit_message %}
+    <p style="color: orange;">{{ row_limit_message }}</p>
+{% endif %}
+
+
+<!-- Existing code to display files, users, and devices -->
+
 <h2>Files</h2>
 
    <ul>

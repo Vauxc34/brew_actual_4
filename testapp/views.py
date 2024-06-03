@@ -21,10 +21,85 @@ from rest_framework.exceptions import NotFound
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
+
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.use('Agg') 
+import pandas as pd
+from django.shortcuts import render
+from django.core.files.storage import FileSystemStorage
+from io import BytesIO
+import base64
+from .forms import UploadFileForm
+import numpy as np
+
 # Create your views here.
 
 def index(request):
     """The home page for Learning Log."""
+
+    graph = None
+    upload_form = UploadFileForm()
+    max_rows = 20
+    max_x_axis_rows = 30  # Maximum number of rows for x-axis data
+    row_limit_message = None
+
+    if request.method == 'POST' and request.FILES.get('file'):
+        upload_form = UploadFileForm(request.POST, request.FILES)
+        if upload_form.is_valid():
+            uploaded_file = request.FILES['file']
+            fs = FileSystemStorage()
+            filename = fs.save(uploaded_file.name, uploaded_file)
+
+            try:
+                df = pd.read_csv(fs.path(filename))
+
+                # Automatically assign x and y columns based on the first column and subsequent columns
+                if df.shape[1] < 2:
+                    raise ValueError("CSV file must have at least two columns")
+
+                x_column = df.columns[0]
+                y_columns = df.columns[1:]
+
+                # Limit the DataFrame to the first 20 rows
+                if len(df) > max_rows:
+                    df = df.head(max_rows)
+                    row_limit_message = f"The data has been limited to the first {max_rows} rows."
+
+                
+
+               # Set the tick locations for the x-axis
+
+
+                # Extract the values from the first cell of the DataFrame
+                x_values = df.iloc[0].values[:30]  # Extract only the first 30 values
+
+                # Generate corresponding tick locations
+                x_ticks = np.arange(len(x_values))
+
+
+                # Creating the line chart
+                plt.figure(figsize=(10, 6))
+                for y_column in y_columns:
+                    plt.plot(df[x_column], df[y_column], marker='o', linestyle='-', label=y_column)
+                plt.xlabel(x_column)
+                plt.ylabel("Values")
+                plt.title(f'Values by {x_column}')
+                plt.legend()
+
+                # Saving the plot to a BytesIO object
+                buffer = BytesIO()
+                plt.savefig(buffer, format='png')
+                buffer.seek(0)
+                image_png = buffer.getvalue()
+                buffer.close()
+
+                # Encoding the image in base64 to send to template
+                graph = base64.b64encode(image_png).decode('utf-8')
+            except Exception as e:
+                print("Error processing file:", e)
+                return render(request, 'testapp/index.html', {'upload_form': upload_form, 'error': 'Error processing file. Please ensure the file has at least two columns.'})
+
 
     files = MyFile.objects.all().order_by('id')
     file_serializer = MyFileSerializer(files, many=True)
@@ -35,7 +110,13 @@ def index(request):
     data_dev = ModbusDevice.objects.all()
     data_serializer_dev = ModbusDeviceSerializer(data_dev, many=True)
 
-    context = {"files": file_serializer.data, 'users': data_serializer.data, 'devices': data_serializer_dev.data}
+    context = {
+        "files": file_serializer.data, 
+        'users': data_serializer.data, 
+        'devices': data_serializer_dev.data,
+        'graph': graph,
+        'upload_form': upload_form
+        }
     return render(request, 'testapp/index.html', context)
 
 def devices(request):
