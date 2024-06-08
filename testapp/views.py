@@ -7,7 +7,6 @@ from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 from .forms import VariableForm, DeviceForm
 from .models import Value, Var, Device, ModbusDevice, MyFile
 
-
 from rest_framework.parsers import MultiPartParser, FormParser
 
 from .models import MyFile, User, ModbusDevice
@@ -39,8 +38,9 @@ def index(request):
     """The home page for Learning Log."""
 
     graph = None
+    html_table = None
     upload_form = UploadFileForm()
-    max_rows = 20
+    max_rows = 40
     max_x_axis_rows = 30  # Maximum number of rows for x-axis data
     row_limit_message = None
 
@@ -52,11 +52,16 @@ def index(request):
             filename = fs.save(uploaded_file.name, uploaded_file)
 
             try:
+                # Read the CSV file
                 df = pd.read_csv(fs.path(filename))
+
+                print(pd.__name__)
 
                 # Automatically assign x and y columns based on the first column and subsequent columns
                 if df.shape[1] < 2:
                     raise ValueError("CSV file must have at least two columns")
+
+                 
 
                 x_column = df.columns[0]
                 y_columns = df.columns[1:]
@@ -66,22 +71,20 @@ def index(request):
                     df = df.head(max_rows)
                     row_limit_message = f"The data has been limited to the first {max_rows} rows."
 
-                
-
-               # Set the tick locations for the x-axis
-
-
-                # Extract the values from the first cell of the DataFrame
-                x_values = df.iloc[0].values[:30]  # Extract only the first 30 values
-
-                # Generate corresponding tick locations
-                x_ticks = np.arange(len(x_values))
-
+                # Convert DataFrame to HTML
+                html_table = df.to_html()
 
                 # Creating the line chart
                 plt.figure(figsize=(10, 6))
                 for y_column in y_columns:
                     plt.plot(df[x_column], df[y_column], marker='o', linestyle='-', label=y_column)
+
+                if uploaded_file.name == 'Pruszcz_2024_02_14P1correct.csv':
+                    plt.xlim(1, 6)
+                
+                if uploaded_file.name != 'Pruszcz_2024_02_14P1correct.csv':
+                    plt.ylim(1, 30)
+  
                 plt.xlabel(x_column)
                 plt.ylabel("Values")
                 plt.title(f'Values by {x_column}')
@@ -94,11 +97,16 @@ def index(request):
                 image_png = buffer.getvalue()
                 buffer.close()
 
+              
+
                 # Encoding the image in base64 to send to template
                 graph = base64.b64encode(image_png).decode('utf-8')
+
             except Exception as e:
                 print("Error processing file:", e)
-                return render(request, 'testapp/index.html', {'upload_form': upload_form, 'error': 'Error processing file. Please ensure the file has at least two columns.'})
+                return render(request, 'testapp/index.html', {
+                    'upload_form': upload_form,
+                    'error': 'Error processing file. Please ensure the file has at least two columns.'})
 
 
     files = MyFile.objects.all().order_by('id')
@@ -115,7 +123,9 @@ def index(request):
         'users': data_serializer.data, 
         'devices': data_serializer_dev.data,
         'graph': graph,
-        'upload_form': upload_form
+        'upload_form': upload_form,
+        'html_table': html_table,
+        'row_limit_message': row_limit_message
         }
     return render(request, 'testapp/index.html', context)
 

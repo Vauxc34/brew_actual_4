@@ -1,6 +1,11 @@
 {% extends "testapp/base.html" %}
 {% block content %}
-<a href="{% url 'testapp:new_var' %}">Add a new variable</a>
+<br>
+<h2><a href="{% url 'testapp:new_var' %}">Add a new variable</a></h2>
+
+
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
 <table style="width: 100%">
     <thead>
         <tr>
@@ -11,6 +16,7 @@
             <th>Date updated</th>
             <th>Frequency</th>
             <th>Enabled</th>
+            <th>🗑️❌</th>
         </tr>
     </thead>
     <tbody>
@@ -28,4 +34,10 @@
         {% endfor %}
     </tbody>
 </table>
+    </div>
+    </div>
+    <script>
+        let para__to_del = document.querySelectorAll('p')[0]
+        para__to_del.style.display = 'none'
+    </script>
 {% endblock content %}

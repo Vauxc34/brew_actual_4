@@ -1,11 +1,15 @@
 {% extends "testapp/base.html" %}
 {% block content %}
+<br>
+<h2>Add a new Modbus Device:</h2>
 
-<p>Add a new Modbus Device:</p>
-
-<form method='post'>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+<form method='post' class="form_without_">
     {% csrf_token %}
     {{ form.as_p }}
-    <button name="submit">Add device</button>
+    <button name="submit" class="w-50" style="margin: 10px 0 10px 0;">Add device</button>
 </form>
+    </div>
+    </div>
 {% endblock content %}

@@ -1,11 +1,19 @@
 {% extends "testapp/base.html" %}
 {% block content %}
+<br>
+<h2>Add a new Device:</h2>
 
-<p>Add a new Device:</p>
-
-<form action="{% url 'testapp:new_dev' %}" method='post'>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+<form action="{% url 'testapp:new_dev' %}" method='post' class="form_without_">
     {% csrf_token %}
     {{ form.as_p }}
-    <button name="submit">Add device</button>
+    <button name="submit" class="w-50" style="margin: 10px 0 10px 0;">Add device</button>
 </form>
+    </div>
+    </div>
+    <script>
+        let para__to_del = document.querySelectorAll('p')[0]
+        para__to_del.style.display = 'none'
+    </script>
 {% endblock content %}

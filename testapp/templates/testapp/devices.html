@@ -1,6 +1,11 @@
 {% extends "testapp/base.html" %}
 {% block content %}
-<p>Devices</p>
+<br>
+<h2>Devices</h2>
+
+
+<div class="container-row-column-mobile w-100">
+   <div class='widget_bigger_ landscape w-100'>
 <ul>
    {% for device in devices %}
    <li>
@@ -12,5 +17,10 @@
    {% endfor %}
 </ul>
 <a href="{% url 'testapp:new_dev' %}">Add a new device</a>
-
+   </div>
+   </div>
+   <script>
+      let para__to_del = document.querySelectorAll('p')[0]
+      para__to_del.style.display = 'none'
+  </script>
 {% endblock content %}

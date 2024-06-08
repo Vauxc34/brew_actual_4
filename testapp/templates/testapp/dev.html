@@ -1,6 +1,9 @@
 {% extends "testapp/base.html" %}
 {% block content %}
-<p>Device: {{ device }}</p>
+<br>
+<h2>Device: {{ device }}</h2>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
 <ul>
     {% for var in variables %}
     <li>
@@ -11,4 +14,6 @@
     <li>There are no variables for this device yet.</li>
     {% endfor %}
 </ul>
+    </div>
+    </div>
 {% endblock content %}

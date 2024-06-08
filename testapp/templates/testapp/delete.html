@@ -1,10 +1,13 @@
+{% extends "testapp/base.html" %}
+{% block content %}
 <form method="post">{% csrf_token %}
 
-<p>Are you sure you want to delete "{{ object }}"?</p>
+<h2>Are you sure you want to delete "{{ object }}"?</h2>
 
-    <input type="submit" value="Confirm">
+    <input type="submit" value="Confirm" class="mg-15">
 </form>
 
 <div>
     <a href="{% url 'testapp:variables' %}">Go back</a>
 </div>
+{% endblock content %}

@@ -1,21 +1,43 @@
 {% extends "testapp/base.html" %}
 {% block content %}
-<p>Configurator</p>
-<p> Configurator helps you keep track of your variables for a device that you created</p>
+<!--<h3>Configurator</h3>
+<span>Configurator helps you keep track of your variables for a device that you created</span>-->
+<br>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+        <h2 class='container-row justify-start'>
+            <div class="app-icon is-ios7 is-custom-size" style="width: 43.5px; height: 35px;"><img srcset="https://img.icons8.com/?size=24&amp;id=87vYEYACOkWa&amp;format=png 1x, https://img.icons8.com/?size=48&amp;id=87vYEYACOkWa&amp;format=png 2x," src="https://img.icons8.com/?size=48&amp;id=87vYEYACOkWa&amp;format=png" alt="Rows icon" loading="lazy" width="35" height="35" onload="this.setAttribute('lazy', 'loaded')" onerror="this.setAttribute('lazy', 'error')" style="width: 35px; height: 35px; margin-bottom: 6px; filter: invert(0%) sepia(12%) saturate(7433%) hue-rotate(197deg) brightness(82%) contrast(97%);" lazy="loaded"></div>
+            Data Table
+        </h2>
+        {% if html_table %}
+            <div class="table-responsive">
+                {{ html_table|safe }}
+            </div>
+        {% endif %}
+    </div>
+</div>
 
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+        <h2 class='container-row justify-start'>
+            <svg class="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv" focusable="false" aria-hidden="true" viewBox="0 0 24 24" data-testid="LibraryAddCheckIcon"><path d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2m-7.53 12L9 10.5l1.4-1.41 2.07 2.08L17.6 6 19 7.41zM4 6H2v14c0 1.1.9 2 2 2h14v-2H4z"></path></svg>
+            Line Chart
+        </h2>
+        {% if graph %}
+            <img src="data:image/png;base64,{{ graph }}" alt="Plot">
+        {% endif %}
+    </div>
+</div>
 
-<!-- Display the plot -->
-{% if graph %}
-    <img src="data:image/png;base64,{{ graph }}" alt="Plot">
-{% endif %}
-
-
- <!-- File upload form -->
-<form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ upload_form.as_p }}
-    <button type="submit">Upload</button>
-</form>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ upload_form.as_p }}
+            <button class="btn-2" type="submit">Upload</button>
+        </form>
+    </div>
+</div>
 
 {% if error %}
     <p style="color: red;">{{ error }}</p>
@@ -26,58 +48,62 @@
 {% endif %}
 
 
-<!-- Existing code to display files, users, and devices -->
 
+<div class="container-row-column-mobile w-100">
+<div class='widget_bigger_ landscape w-100'>
 <h2>Files</h2>
-
-   <ul>
-      {% for file in files %}
-      <li>
-          <a>{{ file.file }}</a>   
-      </li>
-      {% empty %}
-      <li>No file's available.</li>
-      {% endfor %}
-  </ul>
-
+<ul>
+    {% for file in files %}
+    <li>
+        <a>{{ file.file }}</a>
+    </li>
+    {% empty %}
+    <li>No files available.</li>
+    {% endfor %}
 </ul>
+</div>
+</div>
 
-
+<div class="container-row-column-mobile w-100">
+<div class='widget_bigger_ landscape w-100'>
 <h2>Users</h2>
-
-   <ul>
-      {% for user in users %}
-      <li>
-          <a>Email address: {{ user.email }}</a> <br> 
-          <a>Name: {{ user.first_name }}</a>  <br> 
-          <a>Password: {{ user.password }}</a>  
-      </li>
-      {% empty %}
-      <li>No user's available.</li>
-      {% endfor %}
-  </ul>
-
+<ul>
+    {% for user in users %}
+    <li>
+        <a>Email address: {{ user.email }}</a><br>
+        <a>Name: {{ user.first_name }}</a><br>
+        <a>Password: {{ user.password }}</a>
+    </li>
+    {% empty %}
+    <li>No users available.</li>
+    {% endfor %}
 </ul>
+</div>
+</div>
 
+<div class="container-row-column-mobile w-100">
+<div class='widget_bigger_ landscape w-100'>
 <h2>Data devices</h2>
-
-   <ul>
-      {% for device in devices %}
-      <li>
-          <a>Email address: {{ device.name }}</a> <br> 
-          <a>Name: {{ device.ip }}</a>  <br> 
-          <a>Registration first: {{ device.reg_first }}</a>  <br> 
-          <a>Registration ammount: {{ device.reg_amount }}</a>  <br> 
-          <a>Date updated: {{ device.date_updated }}</a>  <br> 
-          <a>Frequency: {{ device.frequency }}</a>  <br> 
-          <a>Enabled: {{ device.enabled }}</a>  <br> 
-          <a>Number of users: {{ device.enabled }}</a>  
-      </li>
-      {% empty %}
-      <li>No device's available.</li>
-      {% endfor %}
-  </ul>
-
+<ul>
+    {% for device in devices %}
+    <li>
+        <a>Email address: {{ device.name }}</a><br>
+        <a>Name: {{ device.ip }}</a><br>
+        <a>Registration first: {{ device.reg_first }}</a><br>
+        <a>Registration amount: {{ device.reg_amount }}</a><br>
+        <a>Date updated: {{ device.date_updated }}</a><br>
+        <a>Frequency: {{ device.frequency }}</a><br>
+        <a>Enabled: {{ device.enabled }}</a><br>
+        <a>Number of users: {{ device.enabled }}</a>
+    </li>
+    {% empty %}
+    <li>No devices available.</li>
+    {% endfor %}
 </ul>
-
+</div>
+</div>
+<script>
+    let para__to_del = document.querySelectorAll('p')[0]
+    para__to_del.style.display = 'none'
+</script>
 {% endblock content %}

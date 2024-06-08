@@ -1,5 +1,8 @@
 {% extends "testapp/base.html" %}
 {% block content %}
+<br>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
 <table style="width: 100%">
     <thead>
         <tr>
@@ -18,4 +21,10 @@
         {% endfor %}
     </tbody>
 </table>
+    </div>
+    </div>
+    <script>
+        let para__to_del = document.querySelectorAll('p')[0]
+        para__to_del.style.display = 'none'
+    </script>
 {% endblock content %}
