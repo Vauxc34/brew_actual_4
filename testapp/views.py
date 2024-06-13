@@ -44,69 +44,76 @@ def index(request):
     max_x_axis_rows = 30  # Maximum number of rows for x-axis data
     row_limit_message = None
 
-    if request.method == 'POST' and request.FILES.get('file'):
-        upload_form = UploadFileForm(request.POST, request.FILES)
-        if upload_form.is_valid():
-            uploaded_file = request.FILES['file']
-            fs = FileSystemStorage()
-            filename = fs.save(uploaded_file.name, uploaded_file)
+    if request.method == 'POST':
+        if 'file' in request.FILES:
+            upload_form = UploadFileForm(request.POST, request.FILES)
+            if upload_form.is_valid():
+                uploaded_file = request.FILES['file']
+                fs = FileSystemStorage()
+                filename = fs.save(uploaded_file.name, uploaded_file)
 
-            try:
-                # Read the CSV file
-                df = pd.read_csv(fs.path(filename))
+                try:
+                    df = pd.read_csv(fs.path(filename))
 
-                print(pd.__name__)
+                    # Automatically assign x and y columns based on the first column and subsequent columns
+                    if df.shape[1] < 2:
+                        raise ValueError("CSV file must have at least two columns")
 
-                # Automatically assign x and y columns based on the first column and subsequent columns
-                if df.shape[1] < 2:
-                    raise ValueError("CSV file must have at least two columns")
+                    x_column = df.columns[0]
+                    y_columns = df.columns[1:]
 
-                 
+                    # Limit the DataFrame to the specified number of rows
+                    #max_rows = int(request.POST.get('max_rows', max_rows))
+                    #if len(df) > max_rows:
+                    #    df = df.head(max_rows)
+                    #    row_limit_message = f"The data has been limited to the first {max_rows} rows."
 
-                x_column = df.columns[0]
-                y_columns = df.columns[1:]
+                    #max_x_axis_rows = int(request.POST.get('max_x_axis_rows', max_x_axis_rows))
 
-                # Limit the DataFrame to the first 20 rows
-                if len(df) > max_rows:
-                    df = df.head(max_rows)
-                    row_limit_message = f"The data has been limited to the first {max_rows} rows."
+                    
+                    html_table = df.to_html()
 
-                # Convert DataFrame to HTML
-                html_table = df.to_html()
+                     
+                    plt.figure(figsize=(10, 6))
+                    for y_column in y_columns:
+                        plt.plot(df[x_column], df[y_column], marker='o', linestyle='-', label=y_column)
 
-                # Creating the line chart
-                plt.figure(figsize=(10, 6))
-                for y_column in y_columns:
-                    plt.plot(df[x_column], df[y_column], marker='o', linestyle='-', label=y_column)
+                    
+                    if len(df) > max_x_axis_rows:
+                        plt.xticks(ticks=range(0, len(df), len(df) // max_x_axis_rows),
+                                   labels=df[x_column][::len(df) // max_x_axis_rows], rotation=45)
+                    else:
+                        plt.xticks(rotation=45)
 
-                if uploaded_file.name == 'Pruszcz_2024_02_14P1correct.csv':
-                    plt.xlim(1, 6)
+                    plt.xlabel(x_column)
+                    plt.ylabel("Values")
+                    plt.title(f'Values by {x_column}')
+                    plt.legend()
+
                 
-                if uploaded_file.name != 'Pruszcz_2024_02_14P1correct.csv':
-                    plt.ylim(1, 30)
-  
-                plt.xlabel(x_column)
-                plt.ylabel("Values")
-                plt.title(f'Values by {x_column}')
-                plt.legend()
+                    plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.3)  # Adjust these values as needed
 
-                # Saving the plot to a BytesIO object
-                buffer = BytesIO()
-                plt.savefig(buffer, format='png')
-                buffer.seek(0)
-                image_png = buffer.getvalue()
-                buffer.close()
+                    
+                    buffer = BytesIO()
+                    plt.savefig(buffer, format='png')
+                    buffer.seek(0)
+                    image_png = buffer.getvalue()
+                    buffer.close()
 
-              
+                    # Encoding the image in base64 to send to template
+                    graph = base64.b64encode(image_png).decode('utf-8')
 
-                # Encoding the image in base64 to send to template
-                graph = base64.b64encode(image_png).decode('utf-8')
-
-            except Exception as e:
-                print("Error processing file:", e)
-                return render(request, 'testapp/index.html', {
-                    'upload_form': upload_form,
-                    'error': 'Error processing file. Please ensure the file has at least two columns.'})
+                except Exception as e:
+                    print("Error processing file:", e)
+                    return render(request, 'testapp/index.html', {
+                        'upload_form': upload_form,
+                        'error': 'Error processing file. Please ensure the file has at least two columns.',
+                        'max_rows': max_rows,
+                        'max_x_axis_rows': max_x_axis_rows,
+                    })
+        else:
+            max_rows = int(request.POST.get('max_rows', max_rows))
+            max_x_axis_rows = int(request.POST.get('max_x_axis_rows', max_x_axis_rows))
 
 
     files = MyFile.objects.all().order_by('id')
@@ -125,7 +132,9 @@ def index(request):
         'graph': graph,
         'upload_form': upload_form,
         'html_table': html_table,
-        'row_limit_message': row_limit_message
+        'row_limit_message': row_limit_message,
+        'max_rows': max_rows,
+        'max_x_axis_rows': max_x_axis_rows
         }
     return render(request, 'testapp/index.html', context)
 

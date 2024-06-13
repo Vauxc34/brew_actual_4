@@ -34,8 +34,15 @@
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ upload_form.as_p }}
+            <label for="max_rows">Max Rows:</label>
+            <input type="number" id="max_rows" name="max_rows" value="{{ max_rows }}" min="1">
+            <label for="max_x_axis_rows">Max X-Axis Rows:</label>
+            <input type="number" id="max_x_axis_rows" name="max_x_axis_rows" value="{{ max_x_axis_rows }}" min="1">
             <button class="btn-2" type="submit">Upload</button>
         </form>
+    </div>
+    <div class='widget_bigger_ landscape w-100'>
+        
     </div>
 </div>
 
@@ -102,8 +109,55 @@
 </ul>
 </div>
 </div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let para__to_del = document.querySelectorAll('p')[0]
     para__to_del.style.display = 'none'
+
+    function uploadFile(event) {
+            event.preventDefault();
+            var formData = new FormData($('#uploadForm')[0]);
+            $.ajax({
+                url: $('#uploadForm').attr('action'),
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    $('#dataTable').html(data.html_table);
+                    $('#chartImage').attr('src', 'data:image/png;base64,' + data.graph);
+                    $('#rowLimitMessage').text(data.row_limit_message);
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }
+
+        function updateChart() {
+            var formData = $('#updateForm').serialize();
+            $.ajax({
+                url: $('#updateForm').attr('action'),
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    $('#dataTable').html(data.html_table);
+                    $('#chartImage').attr('src', 'data:image/png;base64,' + data.graph);
+                    $('#rowLimitMessage').text(data.row_limit_message);
+                },
+                error: function (xhr, status, error) {
+                    alert('Error: ' + error);
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $('#uploadForm').on('submit', uploadFile);
+            $('#updateForm').on('submit', function (e) {
+                e.preventDefault();
+                updateChart();
+            });
+        });
+
 </script>
 {% endblock content %}
