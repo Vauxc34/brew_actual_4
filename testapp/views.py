@@ -55,30 +55,39 @@ def index(request):
                 try:
                     df = pd.read_csv(fs.path(filename))
 
-                    # Automatically assign x and y columns based on the first column and subsequent columns
+                    # Ensure the CSV file has at least two columns
                     if df.shape[1] < 2:
                         raise ValueError("CSV file must have at least two columns")
 
                     x_column = df.columns[0]
                     y_columns = df.columns[1:]
 
-                    # Limit the DataFrame to the specified number of rows
-                    #max_rows = int(request.POST.get('max_rows', max_rows))
-                    #if len(df) > max_rows:
-                    #    df = df.head(max_rows)
-                    #    row_limit_message = f"The data has been limited to the first {max_rows} rows."
+                    # Ensure only numeric columns are processed
+                    numeric_y_columns = df[y_columns].select_dtypes(include=['number']).columns
 
-                    #max_x_axis_rows = int(request.POST.get('max_x_axis_rows', max_x_axis_rows))
+                    if len(numeric_y_columns) == 0:
+                        raise ValueError("CSV file must have at least one numeric column")
 
-                    
+                    # Normalize numeric y_columns to a 0-1 range
+                    df[numeric_y_columns] = (df[numeric_y_columns] - df[numeric_y_columns].min()) / (df[numeric_y_columns].max() - df[numeric_y_columns].min())
+
+                    # Invert the normalized values
+                    df[numeric_y_columns] = 1 - df[numeric_y_columns]
+
+                    # Sort the DataFrame by the first numeric y-column in ascending order
+                    df = df.sort_values(by=numeric_y_columns[0])
+
+                    # Convert the DataFrame to HTML
                     html_table = df.to_html()
 
-                     
+                    # Create the bar plot
                     plt.figure(figsize=(10, 6))
-                    for y_column in y_columns:
-                        plt.plot(df[x_column], df[y_column], marker='o', linestyle='-', label=y_column)
+                    bar_width = 0.35  # Adjust the width of the bars
 
-                    
+                    for y_column in numeric_y_columns:
+                        plt.bar(df[x_column], df[y_column], width=bar_width, label=y_column)
+
+                    # Adjust the x-axis ticks based on max_x_axis_rows
                     if len(df) > max_x_axis_rows:
                         plt.xticks(ticks=range(0, len(df), len(df) // max_x_axis_rows),
                                    labels=df[x_column][::len(df) // max_x_axis_rows], rotation=45)
@@ -86,28 +95,26 @@ def index(request):
                         plt.xticks(rotation=45)
 
                     plt.xlabel(x_column)
-                    plt.ylabel("Values")
-                    plt.title(f'Values by {x_column}')
+                    plt.ylabel("Inverted Normalized Values")
+                    plt.title(f'Inverted Normalized Values by {x_column}')
                     plt.legend()
-
-                
                     plt.subplots_adjust(left=0.1, right=0.9, top=0.9, bottom=0.3)  # Adjust these values as needed
 
-                    
+                    # Save the plot to a BytesIO buffer
                     buffer = BytesIO()
                     plt.savefig(buffer, format='png')
                     buffer.seek(0)
                     image_png = buffer.getvalue()
                     buffer.close()
 
-                    # Encoding the image in base64 to send to template
+                    # Encode the image in base64 to send to the template
                     graph = base64.b64encode(image_png).decode('utf-8')
 
                 except Exception as e:
                     print("Error processing file:", e)
                     return render(request, 'testapp/index.html', {
                         'upload_form': upload_form,
-                        'error': 'Error processing file. Please ensure the file has at least two columns.',
+                        'error': 'Error processing file. Please ensure the file has at least two columns, one of which is numeric.',
                         'max_rows': max_rows,
                         'max_x_axis_rows': max_x_axis_rows,
                     })
