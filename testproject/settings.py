@@ -11,7 +11,6 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -21,7 +20,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-*vxy1!nbg9tx8h^06v_d86a_af@ftrpbag!s*uei0mo1w!ll62'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*', '192.168.165.2']
 
@@ -68,8 +67,12 @@ CORS_ALLOW_HEADERS = [ "accept", "referer", "accept-encoding", "authorization", 
 CORS_EXPOSE_HEADERS = ['Set-Cookie']
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = '/docs/'
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'energy_reports')
+MEDIA_URL = '/energy_reports/'
+
+os.makedirs(MEDIA_ROOT, exist_ok=True)
 
 APPEND_SLASH = False
 

@@ -2,6 +2,8 @@ from django.forms import ModelForm
 from django import forms
 from .models import Var, Device
 
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
 
 class VariableForm(ModelForm):
     class Meta:

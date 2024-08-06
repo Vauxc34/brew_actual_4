@@ -26,24 +26,64 @@
         {% if graph %}
             <img src="data:image/png;base64,{{ graph }}" alt="Plot">
         {% endif %}
+
+        <!-- new chart -->
+        
+        {% if column_options %}
+        <h2 class="mg-10">Select a day from a month</h2>
+        <form method="post">
+            {% csrf_token %}
+            <select name="selected_date">
+                {% for option in column_options %}
+                    <option value="{{ option }}">{{ option }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn first" type="submit">Generate Chart</button>
+        </form>
+    {% endif %}
     </div>
 </div>
 
-<div class="container-row-column-mobile w-100">
-    <div class='widget_bigger_ landscape w-100'>
-        <form method="post" enctype="multipart/form-data">
-            {% csrf_token %}
-            {{ upload_form.as_p }}
-            <label for="max_rows">Max Rows:</label>
-            <input type="number" id="max_rows" name="max_rows" value="{{ max_rows }}" min="1">
-            <label for="max_x_axis_rows">Max X-Axis Rows:</label>
-            <input type="number" id="max_x_axis_rows" name="max_x_axis_rows" value="{{ max_x_axis_rows }}" min="1">
-            <button class="btn-2" type="submit">Upload</button>
-        </form>
-    </div>
-    <div class='widget_bigger_ landscape w-100'>
+<div class='widget_bigger_ landscape w-100'>
+   
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ special_upload_form.as_p }}
+        <button class="btn-2" type="submit">Upload file to docs</button>
+    </form>
+    <br>
+    <form method="post">
         
-    </div>
+        {% csrf_token %}
+        <select name="selected_file">
+
+            {% for file in file_list %}
+            <option value="{{ file.id }}">{{ file }}</option>
+            {% endfor %}
+
+            {% for file in files %}
+                <option value="{{ file.id }}">{{ file.file }}</option>
+            {% empty %}
+                <option>No files available</option>
+            {% endfor %}
+            
+        </select>
+         
+        <button class="btn-2" type="submit">Check the chart</button>
+    </form>
+    <br>
+    <h3>List of files below</h3>
+    
+    <br>
+    <ul>
+        {% for file in files %}
+        <li>
+            <a>{{ file.file }}</a>
+        </li>
+        {% empty %}
+        <li>No files available.</li>
+        {% endfor %}
+    </ul>
 </div>
 
 {% if error %}
@@ -53,23 +93,6 @@
 {% if row_limit_message %}
     <p style="color: orange;">{{ row_limit_message }}</p>
 {% endif %}
-
-
-
-<div class="container-row-column-mobile w-100">
-<div class='widget_bigger_ landscape w-100'>
-<h2>Files</h2>
-<ul>
-    {% for file in files %}
-    <li>
-        <a>{{ file.file }}</a>
-    </li>
-    {% empty %}
-    <li>No files available.</li>
-    {% endfor %}
-</ul>
-</div>
-</div>
 
 <div class="container-row-column-mobile w-100">
 <div class='widget_bigger_ landscape w-100'>
@@ -109,55 +132,8 @@
 </ul>
 </div>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     let para__to_del = document.querySelectorAll('p')[0]
     para__to_del.style.display = 'none'
-
-    function uploadFile(event) {
-            event.preventDefault();
-            var formData = new FormData($('#uploadForm')[0]);
-            $.ajax({
-                url: $('#uploadForm').attr('action'),
-                type: 'POST',
-                data: formData,
-                contentType: false,
-                processData: false,
-                success: function (data) {
-                    $('#dataTable').html(data.html_table);
-                    $('#chartImage').attr('src', 'data:image/png;base64,' + data.graph);
-                    $('#rowLimitMessage').text(data.row_limit_message);
-                },
-                error: function (xhr, status, error) {
-                    alert('Error: ' + error);
-                }
-            });
-        }
-
-        function updateChart() {
-            var formData = $('#updateForm').serialize();
-            $.ajax({
-                url: $('#updateForm').attr('action'),
-                type: 'POST',
-                data: formData,
-                success: function (data) {
-                    $('#dataTable').html(data.html_table);
-                    $('#chartImage').attr('src', 'data:image/png;base64,' + data.graph);
-                    $('#rowLimitMessage').text(data.row_limit_message);
-                },
-                error: function (xhr, status, error) {
-                    alert('Error: ' + error);
-                }
-            });
-        }
-
-        $(document).ready(function () {
-            $('#uploadForm').on('submit', uploadFile);
-            $('#updateForm').on('submit', function (e) {
-                e.preventDefault();
-                updateChart();
-            });
-        });
-
 </script>
 {% endblock content %}

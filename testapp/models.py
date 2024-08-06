@@ -6,6 +6,11 @@ from datetime import datetime
 
 ## new file model
 
+class UploadedFile(models.Model):
+    file = models.CharField(max_length=255)
+    file_path = models.CharField(max_length=255)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
 class MyFile(models.Model):
  file = models.FileField(blank=False, null=False,upload_to='docs/')
  description = models.CharField(null=True,max_length=255)
