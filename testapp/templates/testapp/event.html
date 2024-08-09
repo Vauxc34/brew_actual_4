@@ -1,0 +1,18 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<br>
+<h2>Event: {{ event }}</h2>
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+<ul>
+    <li>{{ event.name }}</li>
+    <li>{{ event.code }}</li>
+    <li>{{ event.database }}</li>
+    <li>{{ event.action }}</li>
+    <li>{{ event.email1 }}</li>
+    <li>{{ event.sms }}</li>
+    <li>{{ event.phone_number }}</li>
+</ul>
+    </div>
+    </div>
+{% endblock content %}

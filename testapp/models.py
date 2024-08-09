@@ -124,3 +124,18 @@ class ModbusDeviceValue(models.Model):
     device = models.ForeignKey(to=ModbusDevice, on_delete=models.PROTECT, related_name="values")
     date_updated = models.DateTimeField(auto_now=True)
     value = models.TextField()
+
+class Event(models.Model):
+    name = models.CharField(max_length=100)
+    code = models.IntegerField(blank=False, null=False, default=0)
+    database = models.BooleanField(blank=True, null=True)
+    action = models.CharField(blank=True, null=True, max_length=20)
+    email1 = models.CharField(blank=True, null=True, max_length=20)
+    sms = models.CharField(blank=True, null=True, max_length=20)
+    phone_number = models.CharField(blank=True, null=True, max_length=20)
+
+    class Meta:
+        db_table = 'event'
+
+    def __str__(self):
+        return f"{self.name} ({self.action})"

@@ -1,0 +1,43 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<br>
+<h2><a href="{% url 'testapp:new_event' %}">Add a new event</a></h2>
+
+
+<div class="container-row-column-mobile w-100">
+    <div class='widget_bigger_ landscape w-100'>
+<table style="width: 100%">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Event code</th>
+            <th>Database</th>
+            <th>Action</th>
+            <th>Email</th>
+            <th>SMS</th>
+            <th>Phone number</th>
+            <th>🗑️❌</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for event in events %}
+            <tr>
+                <td><a href="{% url 'testapp:update_event' pk=event.id %}">{{event.name }}</a></td>
+                <td>{{  event.code  }}</td>
+                <td>{{  event.database }}</td>
+                <td>{{  event.action }}</td>
+                <td>{{  event.email1 }}</td>
+                <td>{{  event.sms }}</td>
+                <td>{{  event.phone_number }}</td>
+                <td><a href="{% url 'testapp:del_event' pk=event.id %}">Delete</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+    </div>
+    </div>
+    <script>
+        let para__to_del = document.querySelectorAll('p')[0]
+        para__to_del.style.display = 'none'
+    </script>
+{% endblock content %}

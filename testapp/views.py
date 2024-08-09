@@ -3,12 +3,12 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, UpdateView, CreateView, DeleteView
 
-from .forms import VariableForm, DeviceForm
+from .forms import VariableForm, DeviceForm, EventForm
 from .models import Value, Var, Device, ModbusDevice, MyFile
 
 from rest_framework.parsers import MultiPartParser, FormParser
 
-from .models import MyFile, User, ModbusDevice
+from .models import MyFile, User, ModbusDevice, Event
 from .serializers import MyFileSerializer, ModbusDeviceSerializer, UserSerializer 
 
 from rest_framework import generics
@@ -57,7 +57,6 @@ def handle_uploaded_file(f, folder=''):
         uploaded_file.save()
     
     return file_path
-
 
 def index(request):
     """The home page for Learning Log."""
@@ -357,11 +356,19 @@ def device(request, dev_id):
     device = Device.objects.get(id = dev_id)
     variables = device.var_set.order_by('user')
     context = {'device': device, 'variables': variables}
-
     return render(request, 'testapp/dev.html', context)
 
-#def files(request)
-  #  return render()
+def events(request):
+    """Show all events """
+    events = Event.objects.order_by('name')
+    context = {'events': events }
+    return render(request, 'testapp/events.html', context)
+
+def event(request, event_id):
+    """show a single event and all its variables"""
+    event = Event.objects.get(id = event_id)
+    context = { 'event': event }
+    return render(request, 'testapp/event.html', context)
 
 class ValueListView(ListView):
     template_name = "testapp/values.html"
@@ -485,7 +492,6 @@ class MyDataViewSet(viewsets.ModelViewSet):
  queryset = ModbusDevice.objects.all()
  serializer_class = ModbusDeviceSerializer
 
-
 ## new device view
 
 class EditVariableView(UpdateView):
@@ -512,12 +518,29 @@ class DelDeviceView(DeleteView):
     form_class = DeviceForm
     model = Device
 
+class NewEventView(CreateView):
+    template_name = "testapp/new_event.html"
+    success_url = reverse_lazy("testapp:events")
+    form_class = EventForm
+    model = Event
+
+class DelEventView(DeleteView):
+    template_name = "testapp/delete.html"
+    success_url = reverse_lazy("testapp:events")
+    form_class = EventForm
+    model = Event
+
+class UpdateEventView(UpdateView):
+    template_name = "testapp/update_event.html"
+    success_url = reverse_lazy("testapp:events")
+    form_class = EventForm
+    model = Event
+
 class DelVariableView(DeleteView):
     template_name = "testapp/delete.html"
     success_url = reverse_lazy("testapp:variables")
     form_class = VariableForm
     model = Var
-
 
 class ModbusDeviceCreateView(CreateView):
     model = ModbusDevice
