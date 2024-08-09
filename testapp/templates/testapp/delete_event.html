@@ -1,0 +1,45 @@
+{% extends "testapp/base.html" %}
+{% block content %}
+<form action="{% url 'testapp:del_event' pk=event.id %}" method='post' class="form_without_">
+
+    
+<h2>Are you sure you want to delete "<span id="fullNameEvent">{{ object.name }}</span>"?</h2>
+<p>If you want delete object - type it full name</p>
+
+    {% csrf_token %}
+
+        {{ form.as_p }}
+    
+    <span id="NameCheckEv"  class="w-50 pd-15 yello_bgc" style="margin: 20px 15px 20px 0px; border-radius: 5px; cursor: pointer;">Check the name</span>
+    <button id="DeletionEv" name="submit" class="w-50" style="margin: 10px 0 10px 0;">Delete Event</button>
+</form>
+
+<div>
+    <a href="{% url 'testapp:events' %}">Go back</a>
+</div>
+<script>
+    let FullNameEvent = document.getElementById('fullNameEvent')
+    let EventNameInput = document.getElementById('id_name')
+    let ButtonToHide = document.getElementById('DeletionEv')
+    let ButtonCheckName = document.getElementById('NameCheckEv')
+    let OtherElements1 = document.querySelectorAll('p')[3]
+    let OtherElements2 = document.querySelectorAll('p')[4]
+    let OtherElements3 = document.querySelectorAll('p')[5]
+    let OtherElements4 = document.querySelectorAll('p')[6]
+    let OtherElements5 = document.querySelectorAll('p')[7]
+    OtherElements1.style.display = 'none'
+    OtherElements2.style.display = 'none'
+    OtherElements3.style.display = 'none'
+    OtherElements4.style.display = 'none'
+    OtherElements5.style.display = 'none'
+    console.log(fullNameEvent.innerText)
+    ButtonToHide.disabled = true
+    ButtonCheckName.addEventListener('click', () => {
+        if(fullNameEvent.innerText == EventNameInput.value) {
+        ButtonToHide.disabled = false
+    } else {
+        ButtonToHide.disabled = true
+    }
+    })
+</script>
+{% endblock content %}

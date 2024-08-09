@@ -525,7 +525,7 @@ class NewEventView(CreateView):
     model = Event
 
 class DelEventView(DeleteView):
-    template_name = "testapp/delete.html"
+    template_name = "testapp/delete_event.html"
     success_url = reverse_lazy("testapp:events")
     form_class = EventForm
     model = Event
